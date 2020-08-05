@@ -49,5 +49,15 @@ namespace DemoFunctionApp
             return (ActionResult)new OkObjectResult(employees);
         }
 
+        [FunctionName("GetEmployeeById")]
+        public async Task<IActionResult> GetEmployeeById(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "employee/{id}")] HttpRequest req, 
+            int id,
+            ILogger log)
+        {
+            var employees = _employeeService.GetEmployeeById(id);
+            return (ActionResult)new OkObjectResult(employees);
+        }
+
     }
 }
