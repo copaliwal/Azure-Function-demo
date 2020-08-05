@@ -10,11 +10,18 @@ using Newtonsoft.Json;
 
 namespace DemoFunctionApp
 {
-    public static class DemoFunction
+    public class DemoFunction
     {
+        private readonly IEmployeeService _employeeService;
+
+        public DemoFunction(IEmployeeService employeeService)
+        {
+            _employeeService = employeeService;
+        }
+
         [FunctionName("DemoFunction")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+        public async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "run")] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -31,5 +38,16 @@ namespace DemoFunctionApp
 
             return new OkObjectResult(responseMessage);
         }
+
+        [FunctionName("GetAllEmployees")]
+        public async Task<IActionResult> GetAllEmployees(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "employee")] HttpRequest req,
+            ILogger log)
+        {
+            var employees = _employeeService.GetAllEmployees();
+
+            return (ActionResult)new OkObjectResult(employees);
+        }
+
     }
 }
